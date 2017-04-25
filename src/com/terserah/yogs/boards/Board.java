@@ -1,5 +1,6 @@
 package com.terserah.yogs.boards;
 
+import com.terserah.yogs.boards.player.Deck;
 import com.terserah.yogs.boards.player.Phase;
 import com.terserah.yogs.boards.player.Player;
 import com.terserah.yogs.cards.Card;
@@ -49,23 +50,22 @@ public class Board {
 	}
 	
 	public void whoStarts(Player p1, Player p2){
-		double rand = Math.random();
-		if (rand<0.5){
 			this.activePlayer = p1;
 			this.opponentPlayer = p2;
-		}
-		else{
-			this.activePlayer = p2;
-			this.opponentPlayer = p1;
-		}
 	}
 	
 	
 	
 	public void startGame(Player p1, Player p2){
 		whoStarts(p1,p2);
+		Deck d1= new Deck(activePlayer.getDeck().getDeck());
+		Deck d2= new Deck(opponentPlayer.getDeck().getDeck());
+		activePlayer.getField().getDeck().setDeck(d1.getDeck());
+		opponentPlayer.getField().getDeck().setDeck(d2.getDeck());
+		
 		activePlayer.getField().addNCardsToHand(6);
 		opponentPlayer.getField().addNCardsToHand(5);
+		
 		activePlayer.getField().setPhase(Phase.MAIN1);
 	}
 	
@@ -80,8 +80,10 @@ public class Board {
 			return;
 		}
 		activePlayer.getField().addCardToHand();
+		
 		activePlayer.setSummonedMonster(false);
 		opponentPlayer.setSummonedMonster(false);
+		
 		activePlayer.getField().setPhase(Phase.MAIN1);
 		opponentPlayer.getField().setPhase(Phase.MAIN1);
 		

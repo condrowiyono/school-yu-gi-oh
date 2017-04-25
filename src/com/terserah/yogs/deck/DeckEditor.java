@@ -29,11 +29,9 @@ import com.terserah.yogs.cards.Card;
 import com.terserah.yogs.cards.CardFactory;
 import com.terserah.yogs.cards.MonsterCard;
 import com.terserah.yogs.cards.spells.SpellCard;
-import com.terserah.yogs.cards.traps.TrapCard;
 import com.terserah.yogs.menu.gui.MainMenu;
 import com.terserah.yogs.menu.gui.MonsterButton;
 import com.terserah.yogs.menu.gui.SpellButton;
-import com.terserah.yogs.menu.gui.TrapButton;
 import com.terserah.yogs.menu.gui.WrapLayout;
 import com.terserah.yogs.menu.listener.CardList;
 import com.terserah.yogs.menu.listener.Interface;
@@ -147,10 +145,7 @@ public class DeckEditor extends JFrame {
 				else if(e.getSource() instanceof SpellButton){
 					SpellCard spell = ((SpellButton)e.getSource()).getSpell();
 					updateImage(spell);
-				} else if(e.getSource() instanceof TrapButton){
-					TrapCard trap = ((TrapButton)e.getSource()).getTrap();
-					updateImage(trap);
-				}
+				} 
 			}
 
 			@Override
@@ -171,7 +166,7 @@ public class DeckEditor extends JFrame {
 		
 		ArrayList<MonsterButton> monsters = new ArrayList<MonsterButton>();
 		ArrayList<SpellButton> spells = new ArrayList<SpellButton>();
-		ArrayList<TrapButton> traps = new ArrayList<TrapButton>();
+
 		//untuk playerdeck
 		for (int i=0;i<Main.p1.getDeck().getDeck().size();i++){
 			if ((Main.p1.getDeck().getDeck().get(i).getJenis()).equals("Monster")) {
@@ -201,15 +196,17 @@ public class DeckEditor extends JFrame {
 				spellButton.addMouseListener(ml);
 				cardsContainer.add(spellButton);
 				spells.add(spellButton);
-			} else
-			if ((Main.p1.getDeck().getDeck().get(i).getJenis()).equals("Trap")) {
-				TrapButton trapButton = new TrapButton((TrapCard) Main.p1.getDeck().getDeck().get(i));
-				trapButton.setPreferredSize(new Dimension(136,200));
-				trapButton.setIcon(new ImageIcon(trapButton.getTrap().getImage().getScaledInstance(136, 200, Image.SCALE_SMOOTH)));
-				trapButton.addMouseListener(ml);
-				cardsContainer.add(trapButton);
-				traps.add(trapButton);
-			}
+				spellButton.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent arg0) {
+						try {
+							Main.p1.getDeck().getDeck().remove(spellButton.getSpell());
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							JOptionPane.showMessageDialog(null, e.getMessage());
+						}	
+					}
+				});
+			} 
 		}
 
 		
@@ -245,10 +242,7 @@ public class DeckEditor extends JFrame {
 				else if(e.getSource() instanceof SpellButton){
 					SpellCard spell = ((SpellButton)e.getSource()).getSpell();
 					updateImage(spell);
-				} else if(e.getSource() instanceof TrapButton){
-					TrapCard trap = ((TrapButton)e.getSource()).getTrap();
-					updateImage(trap);
-				}
+				} 
 			}
 
 			@Override
@@ -269,38 +263,43 @@ public class DeckEditor extends JFrame {
 		
 		ArrayList<MonsterButton> monsters2 = new ArrayList<MonsterButton>();
 		ArrayList<SpellButton> spells2 = new ArrayList<SpellButton>();
-		ArrayList<TrapButton> traps2 = new ArrayList<TrapButton>();
 		//untuk allCard
 		for (int i=0;i<Main.p1.getAllCard().getDeck().size();i++){
 			if ((Main.p1.getAllCard().getDeck().get(i).getJenis()).equals("Monster")) {
-				if (!Main.p1.getDeck().getDeck().contains((MonsterCard) Main.p1.getAllCard().getDeck().get(i))) {
 					MonsterButton monsterButton = new MonsterButton((MonsterCard) Main.p1.getAllCard().getDeck().get(i));
 					monsterButton.setPreferredSize(new Dimension(136,200));
 					monsterButton.setIcon(new ImageIcon(monsterButton.getMonster().getImage().getScaledInstance(136, 200, Image.SCALE_SMOOTH)));
 					monsterButton.addMouseListener(ml2);
 					cardsContainer2.add(monsterButton);
 					monsters2.add(monsterButton);
-				}
+					monsterButton.addActionListener(new ActionListener(){
+						public void actionPerformed(ActionEvent arg0) {
+							try {
+								Main.p1.getDeck().getDeck().add(monsterButton.getMonster());
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								JOptionPane.showMessageDialog(null, e.getMessage());
+							}	
+						}
+					});
 			} else
 			if ((Main.p1.getAllCard().getDeck().get(i).getJenis()).equals("Spell")) {
-				if (!Main.p1.getDeck().getDeck().contains((SpellCard) Main.p1.getAllCard().getDeck().get(i))) {
 					SpellButton spellButton = new SpellButton((SpellCard) Main.p1.getAllCard().getDeck().get(i));
 					spellButton.setPreferredSize(new Dimension(136,200));
 					spellButton.setIcon(new ImageIcon(spellButton.getSpell().getImage().getScaledInstance(136, 200, Image.SCALE_SMOOTH)));
 					spellButton.addMouseListener(ml2);
 					cardsContainer2.add(spellButton);
 					spells2.add(spellButton);
-				}
-			} else
-			if ((Main.p1.getAllCard().getDeck().get(i).getJenis()).equals("Trap")) {
-				if (!Main.p1.getDeck().getDeck().contains((TrapCard) Main.p1.getAllCard().getDeck().get(i))) {
-					TrapButton trapButton = new TrapButton((TrapCard) Main.p1.getAllCard().getDeck().get(i));
-					trapButton.setPreferredSize(new Dimension(136,200));
-					trapButton.setIcon(new ImageIcon(trapButton.getTrap().getImage().getScaledInstance(136, 200, Image.SCALE_SMOOTH)));
-					trapButton.addMouseListener(ml2);
-					cardsContainer2.add(trapButton);
-					traps2.add(trapButton);
-				}
+					spellButton.addActionListener(new ActionListener(){
+						public void actionPerformed(ActionEvent arg0) {
+							try {
+								Main.p1.getDeck().getDeck().add(spellButton.getSpell());
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								JOptionPane.showMessageDialog(null, e.getMessage());
+							}	
+						}
+					});
 			}
 		}
 
@@ -322,8 +321,6 @@ public class DeckEditor extends JFrame {
 		Image image;
 		if (c instanceof SpellCard)
 			image = ((SpellCard)c).getImage();
-		else if (c instanceof TrapCard)
-			image = ((TrapCard)c).getImage();
 		else 
 			image = ((MonsterCard)c).getImage();
 		cardImage.setIcon(new ImageIcon(image.getScaledInstance(272, 400, Image.SCALE_SMOOTH)));

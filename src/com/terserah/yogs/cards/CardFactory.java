@@ -15,9 +15,9 @@ import com.terserah.yogs.cards.spells.ChangeOfHeart;
 import com.terserah.yogs.cards.spells.Fissure;
 import com.terserah.yogs.cards.spells.FollowWind;
 import com.terserah.yogs.cards.spells.StopDefense;
-import com.terserah.yogs.cards.traps.MirrorForce;
-import com.terserah.yogs.cards.traps.NegateAttack;
-import com.terserah.yogs.cards.traps.TrapHole;
+import com.terserah.yogs.cards.spells.MirrorForce;
+import com.terserah.yogs.cards.spells.NegateAttack;
+import com.terserah.yogs.cards.spells.TrapHole;
 import com.terserah.yogs.shop.Shop;
 
 public final class CardFactory {

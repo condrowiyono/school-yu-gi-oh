@@ -1,13 +1,13 @@
-package com.terserah.yogs.cards.traps;
+package com.terserah.yogs.cards.spells;
 
 import java.io.IOException;
 
 import com.terserah.yogs.cards.Location;
 import com.terserah.yogs.cards.MonsterCard;
 
-public class MirrorForce extends TrapCard {
+public class TrapHole extends SpellCard {
 
-	public MirrorForce(String name, String desc, Location loc, float prob) throws IOException {
+	public TrapHole(String name, String desc, Location loc, float prob) throws IOException {
 		super(name, desc, loc, prob);
 		// TODO Auto-generated constructor stub
 	}
@@ -15,13 +15,13 @@ public class MirrorForce extends TrapCard {
 	@Override
 	public void action(MonsterCard monster) throws IOException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public String getJenis() {
 		// TODO Auto-generated method stub
-		return "Trap";
+		return "Spell";
 	}
 
 }

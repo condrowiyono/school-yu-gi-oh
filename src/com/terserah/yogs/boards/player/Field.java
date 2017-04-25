@@ -47,8 +47,8 @@ public class Field {
 
 	
 	public Field() throws Exception {
-		this.monstersArea = new ArrayList<MonsterCard>(5);
-		this.spellArea = new ArrayList<SpellCard>(5);
+		this.monstersArea = new ArrayList<MonsterCard>(3);
+		this.spellArea = new ArrayList<SpellCard>(3);
 		this.hand = new ArrayList<Card>();
 		this.graveyard  = new ArrayList<Card>();
 		deck = new Deck();
@@ -59,7 +59,10 @@ public class Field {
 	public Deck getDeck() {
 		return deck;
 	}
-
+	public void setDeck(Deck deck) {
+		this.deck = deck;
+	}
+	
 	//extra method to help .
 	public int sacrifices(MonsterCard monster) { 
 		if(monster.getLevel()<4) return 0 ;
@@ -159,6 +162,7 @@ public class Field {
 			return;
 				
 		}
+		
 		Card card = this.deck.drawOneCard();
 		this.hand.add(card);
 		card.setLocation(Location.HAND);

@@ -35,10 +35,8 @@ import com.terserah.yogs.cards.Card;
 import com.terserah.yogs.cards.CardFactory;
 import com.terserah.yogs.cards.MonsterCard;
 import com.terserah.yogs.cards.spells.SpellCard;
-import com.terserah.yogs.cards.traps.TrapCard;
 import com.terserah.yogs.menu.gui.MonsterButton;
 import com.terserah.yogs.menu.gui.SpellButton;
-import com.terserah.yogs.menu.gui.TrapButton;
 import com.terserah.yogs.menu.gui.WrapLayout;
 import com.terserah.yogs.shop.Shop;
 
@@ -142,10 +140,7 @@ public class CardList extends JFrame{
 				else if(e.getSource() instanceof SpellButton){
 					SpellCard spell = ((SpellButton)e.getSource()).getSpell();
 					updateImage(spell);
-				} else if(e.getSource() instanceof TrapButton){
-					TrapCard trap = ((TrapButton)e.getSource()).getTrap();
-					updateImage(trap);
-				}
+				} 
 			}
 
 			@Override
@@ -166,7 +161,6 @@ public class CardList extends JFrame{
 		
 		ArrayList<MonsterButton> monsters = new ArrayList<MonsterButton>();
 		ArrayList<SpellButton> spells = new ArrayList<SpellButton>();
-		ArrayList<TrapButton> traps = new ArrayList<TrapButton>();
 		
 		for (int i=0;i<CardFactory.getInstance().getAllCard().size();i++){
 			if ((CardFactory.getInstance().getAllCard().get(i).getJenis()).equals("Monster")) {
@@ -195,14 +189,6 @@ public class CardList extends JFrame{
 				cardsContainer.add(spellButton);
 				spells.add(spellButton);
 			}
-			if ((CardFactory.getInstance().getAllCard().get(i).getJenis()).equals("Trap")) {
-				TrapButton trapButton = new TrapButton((TrapCard) CardFactory.getInstance().getAllCard().get(i));
-				trapButton.setPreferredSize(new Dimension(136,200));
-				trapButton.setIcon(new ImageIcon(trapButton.getTrap().getImage().getScaledInstance(136, 200, Image.SCALE_SMOOTH)));
-				trapButton.addMouseListener(ml);
-				cardsContainer.add(trapButton);
-				traps.add(trapButton);
-			}
 		}
 		
 		JScrollPane scrollList = new JScrollPane(cardsContainer);
@@ -221,8 +207,6 @@ public class CardList extends JFrame{
 		Image image;
 		if (c instanceof SpellCard)
 			image = ((SpellCard)c).getImage();
-		else if (c instanceof TrapCard)
-			image = ((TrapCard)c).getImage();
 		else 
 			image = ((MonsterCard)c).getImage();
 		cardImage.setIcon(new ImageIcon(image.getScaledInstance(272, 400, Image.SCALE_SMOOTH)));

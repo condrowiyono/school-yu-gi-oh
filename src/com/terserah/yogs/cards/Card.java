@@ -87,5 +87,6 @@ public abstract class Card{
     public static Board getBoard() {
         return Card.board; 
 	}
-	public abstract void action(MonsterCard monster) throws IOException; 
+	
+    public abstract void action(MonsterCard monster) throws IOException; 
 }

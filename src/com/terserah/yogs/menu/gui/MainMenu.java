@@ -23,21 +23,31 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
+import com.terserah.yogs.boards.Board;
+import com.terserah.yogs.boards.player.Computer;
+import com.terserah.yogs.boards.player.Deck;
 import com.terserah.yogs.cards.Card;
 import com.terserah.yogs.cards.CardFactory;
 import com.terserah.yogs.cards.MonsterCard;
 import com.terserah.yogs.cards.spells.SpellCard;
-import com.terserah.yogs.cards.traps.TrapCard;
 import com.terserah.yogs.deck.DeckEditor;
+import com.terserah.yogs.duel.gui.DuelMain;
+import com.terserah.yogs.duel.gui.GamePanel;
 import com.terserah.yogs.menu.listener.CardList;
+import com.terserah.yogs.menu.listener.Controller;
 import com.terserah.yogs.menu.listener.Interface;
 import com.terserah.yogs.menu.listener.Main;
+import com.terserah.yogs.shop.Shop;
 
 public class MainMenu extends JFrame{
 	JLabel cardImage;
 	private JPanel cardsContainer ;
+	public static Controller controller;
+	public MainMenu getCurrent() {
+		return this;
+	}
+	
 	public MainMenu() throws Exception {
 		JLabel background = new JLabel(new ImageIcon(ImageIO.read(new File("art/backgrounds/main5Updated.jpg"))));
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -181,20 +191,16 @@ public class MainMenu extends JFrame{
 		this.add(background);
 		this.setVisible(true);
 	}
-		public void addTheActions(JButton info, JButton land, JButton deck, JButton save, JButton mainmenu, JButton exit, MainMenu current){
+		
+	public void addTheActions(JButton info, JButton land, JButton deck, JButton save, JButton mainmenu, JButton exit, MainMenu current){
 			info.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0) {
 					try {
-						JOptionPane.showMessageDialog(null, "Nama : " + Main.p1.getName() + '\n' + 
-															"LifePoint : " + Main.p1.getLifePoints() + '\n' + 
-															"Posisi: " + Main.p1.getPosisi().getX()+ ',' +  Main.p1.getPosisi().getY() + '\n' + 
-															Main.p1.getAllCard().getDeck().size() + '\n' +
-															Main.p1.getDeck().getDeck().size()
-															);
+						new DuelMain();
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
-						JOptionPane.showMessageDialog(null, e.getMessage());
-					}	
+						e.printStackTrace();
+					}
 				}
 			});
 			
@@ -202,6 +208,17 @@ public class MainMenu extends JFrame{
 				public void actionPerformed(ActionEvent arg0) {
 					try {
 						new DeckEditor();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(null, e.getMessage());
+					}	
+				}
+			});
+			
+			land.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg0) {
+					try {
+						new Shop();
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						JOptionPane.showMessageDialog(null, e.getMessage());

@@ -57,6 +57,7 @@ public class Player implements Duelist{
 	       this.rank = rank;
 	       this.field = new Field();
 	       this.lifePoints = 2000;
+	       this.field = new Field();
 	       summonedMonster = false;
 	}
     
@@ -68,6 +69,12 @@ public class Player implements Duelist{
         Point newPos = new Point(5,5);
 	    this.PLAYERDECK = new Deck();
 	    this.POSISI = newPos;
+	    try {
+			this.field = new Field();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    this.money = 2000;
 	    this.lifePoints = 8000;
     }
@@ -85,7 +92,20 @@ public class Player implements Duelist{
 	       this.field = new Field();
 	       this.lifePoints = 8000;
 	       summonedMonster = false;
-	}	   
+	}
+	public Player(String name, int x, int y, int money, Deck deck, String rank) throws IOException, Exception {
+	       this.name = name;
+	       Point newPos = new Point(x,y);
+	       this.PLAYERDECK = new Deck();
+	       this.POSISI = newPos;
+	       this.money = money;
+	       this.PLAYERDECK = deck;
+	       this.rank = rank;
+	       this.field = new Field();
+	       this.lifePoints = 8000;
+	       summonedMonster = false;
+	}
+	
 	public Point getPosisi() {
 		return this.POSISI;
 	}
@@ -97,7 +117,10 @@ public class Player implements Duelist{
 	public boolean isSummonedMonster() {
 		return summonedMonster;
 	}
-
+	
+	public void setMoney(int money) {
+		this.money = money;
+	}
 	public void setSummonedMonster(boolean summonedMonster) {
 		this.summonedMonster = summonedMonster;
 	}
@@ -142,7 +165,7 @@ public class Player implements Duelist{
 			throw new MultipleMonsterAdditionException();
 		if (!this.getField().getHand().contains(monster))
 			return false;
-		if (this.getField().getMonstersArea().size()>=5)
+		if (this.getField().getMonstersArea().size()>=3)
 			throw new NoMonsterSpaceException();
 		if (this == Card.getBoard().getOpponentPlayer())
 			return false;
@@ -191,7 +214,7 @@ public class Player implements Duelist{
 			return false;
 		if( Card.getBoard().isGameEnds())
 			return false;
-		if(this.getField().getMonstersArea().size()>=5)
+		if(this.getField().getMonstersArea().size()>=3)
 			throw new NoMonsterSpaceException();
 		if( this == Card.getBoard().getOpponentPlayer())
 			return false;
@@ -240,7 +263,7 @@ public class Player implements Duelist{
 			return false;
 		if(Card.getBoard().isGameEnds())
 			return false;
-		if(this.getField().getSpellArea().size()>=5)
+		if(this.getField().getSpellArea().size()>=3)
 			throw new NoSpellSpaceException();
 		this.getField().addSpellToField(spell, null, true);
 		return true;
@@ -255,14 +278,14 @@ public class Player implements Duelist{
 		if(Card.getBoard().isGameEnds())
 			return false;
 		if(spell instanceof ChangeOfHeart){
-			if (Card.getBoard().getActivePlayer().getField().getMonstersArea().size()>=5)
+			if (Card.getBoard().getActivePlayer().getField().getMonstersArea().size()>=3)
 				throw new NoMonsterSpaceException();
 			if(Card.getBoard().getOpponentPlayer().getField().getMonstersArea().size()==0)
 				throw new CannotAddChangeOfHeartException();
 		}
 		
 		if(spell.getLoc()== Location.HAND){
-			if(this.getField().getSpellArea().size()>=5)
+			if(this.getField().getSpellArea().size()>=3)
 				throw new NoSpellSpaceException();
 			else
 				this.getField().addSpellToField(spell, monster, false);
@@ -352,8 +375,6 @@ public class Player implements Duelist{
 
 	@Override
 	public boolean endTurn() throws Exception{
-
-
 		if(this == Card.getBoard().getOpponentPlayer() )
 			return false; 
 		if(Card.getBoard().isGameEnds())
@@ -365,7 +386,6 @@ public class Player implements Duelist{
 		Clip clip = AudioSystem.getClip();
 		clip.open(audioInputStream);
 		clip.start();
-		
 		return true;
 	}
 
@@ -389,9 +409,6 @@ public class Player implements Duelist{
 			return false; 
 		if(this.getField().getPhase()==Phase.BATTLE) 
 			throw new WrongPhaseException();
-
-
-
 		if (monster.getMode()==Mode.ATTACK)
 		{
 			monster.setMode(Mode.DEFENSE);

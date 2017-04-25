@@ -123,5 +123,22 @@ public class Deck {
         }
         return new Deck(arrCard);
     }
+    public Card getbyName(String name) {
+        boolean flag = false;
+        int idx = 0;
+        int i = 0 ;
+        while ((i < deck.size()) || (!flag)){
+	        if (name.equals(deck.get(i).getName())) {
+	            flag = true;
+	            idx = i;
+	        } else 
+	        	i++;
+        }
+        if (flag) {
+            return deck.get(idx);
+        } else {
+            return null;
+        }
+    }
 
 }

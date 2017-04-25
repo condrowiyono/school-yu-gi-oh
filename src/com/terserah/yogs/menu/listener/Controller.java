@@ -11,13 +11,25 @@ import javax.swing.JOptionPane;
 
 import com.terserah.yogs.boards.Board;
 import com.terserah.yogs.boards.player.Phase;
+import com.terserah.yogs.boards.player.Computer;
 import com.terserah.yogs.boards.player.Player;
 import com.terserah.yogs.cards.Card;
 import com.terserah.yogs.cards.MonsterCard;
 import com.terserah.yogs.cards.spells.ChangeOfHeart;
 import com.terserah.yogs.cards.spells.SpellCard;
+import com.terserah.yogs.duel.gui.CardDescriptionPanel;
+import com.terserah.yogs.duel.gui.DuelMain;
+import com.terserah.yogs.duel.gui.GamePanel;
+import com.terserah.yogs.duel.gui.GraveyardAndDeckPanel;
+import com.terserah.yogs.duel.gui.GraveyardButton;
+import com.terserah.yogs.duel.gui.HandPanel;
+import com.terserah.yogs.duel.gui.InfoPanel;
+import com.terserah.yogs.duel.gui.MonstersPanel;
+import com.terserah.yogs.duel.gui.PhasePanel;
+import com.terserah.yogs.duel.gui.SpellsPanel;
 import com.terserah.yogs.menu.gui.CardButton;
 import com.terserah.yogs.menu.gui.MonsterButton;
+import com.terserah.yogs.menu.gui.SpellButton;
 
 public class Controller  implements ActionListener,MouseListener{
 	private GamePanel game;
@@ -27,15 +39,11 @@ public class Controller  implements ActionListener,MouseListener{
 	CardButton secondClick;
 	CardButton thirdClick;
 	static String response;
-	Main main;
-	public Controller(GamePanel game,Board board,Main main) throws Exception {
+	DuelMain main;
+	public Controller(GamePanel game,Board board) throws Exception {
 		this.game = game;
 		this.board = board;
-		this.main = main;
 
-		//addActionListenerToBoard();
-		//addActionListenerToBoard();
-		//addActionListenerToPhase();
 		addActionListenersToButtons();
 	}
 
@@ -113,12 +121,6 @@ public class Controller  implements ActionListener,MouseListener{
 			phasePanel.getEndTurn().addActionListener(this);
 		}
 
-		//for (SpellButton s: field.getSpellButtons())
-		//s.addActionListener(this);
-
-		//graveyard.getGraveyardButton().addActionListener(this);
-
-
 
 	}
 
@@ -134,14 +136,12 @@ public class Controller  implements ActionListener,MouseListener{
 				JOptionPane.showMessageDialog(null,e1.getMessage());
 			}
 			if(p != Card.getBoard().getActivePlayer()){
-				if(main.gameMode==1){
 					try {
 						((Computer)  Card.getBoard().getActivePlayer()).computerTurn();
 					} catch (Exception e2) {
 						// TODO Auto-generated catch block
 						JOptionPane.showMessageDialog(null,e2.getMessage());
 					}
-				}
 			}
 			try{
 				getActiveHandPanel().updatePanel(getActiveHandPanel().getPlayer());
@@ -177,7 +177,7 @@ public class Controller  implements ActionListener,MouseListener{
 			}
 			if(main.gameMode==1){
 				try {
-					((Computer)Card.getBoard().getActivePlayer()).computerTurn();
+					((Computer) Card.getBoard().getActivePlayer()).computerTurn();
 				} catch (Exception e2) {
 					// TODO Auto-generated catch block
 					JOptionPane.showMessageDialog(null,e2.getMessage());
@@ -345,7 +345,7 @@ public class Controller  implements ActionListener,MouseListener{
 							firstClick=null;
 						}
 						else{
-							if(!(clickedCard instanceof ChangeOfHeart) && !(clickedCard instanceof MagePower)){
+							if(!(clickedCard instanceof ChangeOfHeart)){
 								try {
 									//System.out.println(clickedCard.getClass());
 									Card.getBoard().getActivePlayer().activateSpell(clickedCard, null);
@@ -395,7 +395,7 @@ public class Controller  implements ActionListener,MouseListener{
 						firstClick=null;
 						return;
 					}
-					if(!(clickedCard instanceof ChangeOfHeart) && !(clickedCard instanceof MagePower)){
+					if(!(clickedCard instanceof ChangeOfHeart)){
 						try {
 							Card.getBoard().getActivePlayer().activateSpell(clickedCard, null);
 						} catch (Exception e1) {
@@ -465,7 +465,7 @@ public class Controller  implements ActionListener,MouseListener{
 					secondClick=null;
 					return;
 				}
-				if(clickedSpell instanceof MagePower && !Card.getBoard().getOpponentPlayer().getField().getMonstersArea().contains(clickedMonster) && !Card.getBoard().getActivePlayer().getField().getMonstersArea().contains(clickedMonster))
+				if(!Card.getBoard().getOpponentPlayer().getField().getMonstersArea().contains(clickedMonster) && !Card.getBoard().getActivePlayer().getField().getMonstersArea().contains(clickedMonster))
 				{
 					JOptionPane.showMessageDialog(null,"You can only activate this card on an monster on the field!");
 					firstClick=null;
@@ -737,9 +737,6 @@ public class Controller  implements ActionListener,MouseListener{
 
 	}
 
-
-
-
 	public int sacrifices(MonsterCard monster) { 
 		if(monster.getLevel()<=4) return 0 ;
 		else 
@@ -761,7 +758,6 @@ public class Controller  implements ActionListener,MouseListener{
 	}
 	public HandPanel getActiveHandPanel() throws Exception{
 		if(Card.getBoard().getWinner()!=null){
-
 			declareWinner();
 			winnerDeclared = true;
 		}
@@ -778,7 +774,6 @@ public class Controller  implements ActionListener,MouseListener{
 	}
 	public InfoPanel getActiveInfoPanel() throws Exception{
 		if(Card.getBoard().getWinner()!=null){
-
 			declareWinner();
 			winnerDeclared = true;
 		}
@@ -840,8 +835,6 @@ public class Controller  implements ActionListener,MouseListener{
 	private void declareWinner() throws Exception {
 		if(!winnerDeclared){
 			new GameOver(Card.getBoard().getWinner());
-			if(main.getClip()!=null)
-				main.getClip().stop();
 			main.dispose();
 		}
 
