@@ -40,11 +40,11 @@ public class Player implements Duelist{
 	
 	public Player(String name) throws Exception{
 		this.name = name; 
-		lifePoints = 8000;
+		lifePoints = 2000;
 		field = new Field();
 		money = 2000;
 		summonedMonster = false;
-		Point newPos = new Point(5,5);
+		Point newPos = new Point(150,250);
 	    this.POSISI = newPos;
 	}
 	
@@ -66,7 +66,7 @@ public class Player implements Duelist{
         this.money = 2000;
         this.ALLCARD = new Deck();
         this.ALLCARD = deck;
-        Point newPos = new Point(5,5);
+        Point newPos = new Point(150,250);
 	    this.PLAYERDECK = new Deck();
 	    this.POSISI = newPos;
 	    try {
@@ -76,7 +76,7 @@ public class Player implements Duelist{
 			e.printStackTrace();
 		}
 	    this.money = 2000;
-	    this.lifePoints = 8000;
+	    this.lifePoints = 2000;
     }
    
     
@@ -90,26 +90,42 @@ public class Player implements Duelist{
 	       this.ALLCARD = all;
 	       this.rank = rank;
 	       this.field = new Field();
-	       this.lifePoints = 8000;
+	       this.lifePoints = 2000;
 	       summonedMonster = false;
 	}
+	
+	public Player(String name, Deck deck, String rank) throws IOException, Exception {
+	       this.name = name;
+	       this.PLAYERDECK = new Deck();
+	       this.PLAYERDECK = deck;
+	       this.rank = rank;
+	       this.field = new Field();
+	       this.lifePoints = 2000;
+	       summonedMonster = false;
+	}
+	
 	public Player(String name, int x, int y, int money, Deck deck, String rank) throws IOException, Exception {
 	       this.name = name;
 	       Point newPos = new Point(x,y);
-	       this.PLAYERDECK = new Deck();
 	       this.POSISI = newPos;
 	       this.money = money;
 	       this.PLAYERDECK = deck;
 	       this.rank = rank;
 	       this.field = new Field();
-	       this.lifePoints = 8000;
+	       this.lifePoints = 2000;
 	       summonedMonster = false;
 	}
 	
+	public String getRank() {
+		return this.rank;
+	}
 	public Point getPosisi() {
 		return this.POSISI;
 	}
 	
+	public void setPosisi(double x, double y) {
+		this.POSISI.setLocation(x, y);
+	}
 	public int getMoney() {
 		return money;
 	}

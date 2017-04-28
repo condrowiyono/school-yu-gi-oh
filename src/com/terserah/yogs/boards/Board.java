@@ -63,8 +63,8 @@ public class Board {
 		activePlayer.getField().getDeck().setDeck(d1.getDeck());
 		opponentPlayer.getField().getDeck().setDeck(d2.getDeck());
 		
-		activePlayer.getField().addNCardsToHand(6);
-		opponentPlayer.getField().addNCardsToHand(5);
+		activePlayer.getField().addNCardsToHand(4);
+		opponentPlayer.getField().addNCardsToHand(3);
 		
 		activePlayer.getField().setPhase(Phase.MAIN1);
 	}

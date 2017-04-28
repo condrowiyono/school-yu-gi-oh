@@ -4,22 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,16 +20,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import com.terserah.yogs.boards.player.PlayerFactory;
-import com.terserah.yogs.maps.DuelistLand;
-import com.terserah.yogs.shop.Shop;
-
 public class Interface extends JFrame{
 	JLabel background;
 	
 	public Interface() throws IOException, FontFormatException {
 		
-		background = new JLabel(new ImageIcon(ImageIO.read(new File("art/backgrounds/main5Updated.jpg"))));		
+		background = new JLabel(new ImageIcon(ImageIO.read(new File("art/backgrounds/main5.jpg"))));		
 		background.setLayout(new BorderLayout());
 		JPanel header = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		header.setPreferredSize(new Dimension(300,150));
@@ -53,29 +42,14 @@ public class Interface extends JFrame{
 		JButton exit = new JButton("Exit");
 		JButton loadGame = new JButton("Load Game");
 		
-		loadGame.setPreferredSize(new Dimension(400,100));
-		loadGame.setForeground(Color.GRAY);
-		loadGame.setContentAreaFilled(false);
-		loadGame.setFocusPainted(false);
-		loadGame.setBorderPainted(false);
-		
-		exit.setPreferredSize(new Dimension(400,100));
-		exit.setForeground(Color.GRAY);
-		exit.setContentAreaFilled(false);
-		exit.setFocusPainted(false);
-		exit.setBorderPainted(false);
-		
-		startGame.setPreferredSize(new Dimension(400,100));
-		startGame.setForeground(Color.GRAY);
-		startGame.setContentAreaFilled(false);
-		startGame.setFocusPainted(false);
-		startGame.setBorderPainted(false);
-		
 		JPanel buttonsContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		buttonsContainer.setOpaque(false);
 		menu.add(startGame);
 		menu.add(loadGame);
 		menu.add(exit);
+		decorButton(loadGame);
+		decorButton(startGame);
+		decorButton(exit);
 		menu.setOpaque(false);
 		
 		buttonsContainer.add(menu);
@@ -89,23 +63,13 @@ public class Interface extends JFrame{
 		this.setUndecorated(true);
 		this.setVisible(true);
 		this.validate();
-		String soundName = "sounds/Yu-Gi-Oh! Power of Chaos Yugi The Destiny - New Card!.wav";
-		try{
-			AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
-			Clip clip = AudioSystem.getClip();
-			clip.open(audioInputStream);
-			clip.start();
-		}
-		catch(Exception e1){
-
-		}
+		SoundFactory.playBG();
 	}
 	
 	
 	public void addTheActions(JButton b1, JButton b2,JButton loadGame,Interface current){
 		b1.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-
 				try {
 					new Main();
 					current.dispose();
@@ -125,14 +89,11 @@ public class Interface extends JFrame{
 				}
 			}
 		});
-		
 		loadGame.addActionListener(new ActionListener(){
-
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					new CardList();
+					new Load();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				current.dispose();
@@ -148,22 +109,11 @@ public class Interface extends JFrame{
 		b.addMouseListener(new MouseListener(){
 
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-			}
+			public void mouseClicked(MouseEvent e) {}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				String soundName = "sounds/Draw Card (2).wav";
-				try{
-					AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
-					Clip clip = AudioSystem.getClip();
-					clip.open(audioInputStream);
-					clip.start();
-				}
-				catch(Exception e1){
-
-				}
+				SoundFactory.playFX();
 				b.setForeground(Color.WHITE);
 			}
 
@@ -173,17 +123,21 @@ public class Interface extends JFrame{
 			}
 
 			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub	
-			}
+			public void mousePressed(MouseEvent e) {}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub	
-			}
+			public void mouseReleased(MouseEvent e) {}
 		});
 	}
-
+	
+	private void decorButton(JButton jb) {
+		jb.setPreferredSize(new Dimension(400,100));
+		jb.setForeground(Color.GRAY);
+		jb.setContentAreaFilled(false);
+		jb.setFocusPainted(false);
+		jb.setBorderPainted(false);
+	}
+	
 	public static void main(String[] args) throws IOException, FontFormatException{
 		new Interface();
 	}

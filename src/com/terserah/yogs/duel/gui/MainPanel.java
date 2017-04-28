@@ -87,8 +87,6 @@ public class MainPanel extends JPanel {
 		hand2.setOpaque(false);
 		hand1.setBorder(null);
 		hand2.setBorder(null);
-		//hand1.setPreferredSize(new Dimension(700,120));
-		//hand2.setPreferredSize(new Dimension(700,120));
 		
 		this.add(hand1, BorderLayout.SOUTH);
 		this.add(wholeBoard, BorderLayout.CENTER);

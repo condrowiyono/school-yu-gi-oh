@@ -1,48 +1,24 @@
 package com.terserah.yogs.menu.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
-import com.terserah.yogs.boards.Board;
-import com.terserah.yogs.boards.player.Computer;
-import com.terserah.yogs.boards.player.Deck;
-import com.terserah.yogs.cards.Card;
-import com.terserah.yogs.cards.CardFactory;
-import com.terserah.yogs.cards.MonsterCard;
-import com.terserah.yogs.cards.spells.SpellCard;
+import javax.swing.*;
+
+import com.terserah.yogs.boards.player.PlayerFactory;
 import com.terserah.yogs.deck.DeckEditor;
-import com.terserah.yogs.duel.gui.DuelMain;
-import com.terserah.yogs.duel.gui.GamePanel;
-import com.terserah.yogs.menu.listener.CardList;
+import com.terserah.yogs.maps.Land;
 import com.terserah.yogs.menu.listener.Controller;
 import com.terserah.yogs.menu.listener.Interface;
 import com.terserah.yogs.menu.listener.Main;
-import com.terserah.yogs.shop.Shop;
+import com.terserah.yogs.menu.listener.Save;
+import com.terserah.yogs.menu.listener.SoundFactory;
 
 public class MainMenu extends JFrame{
 	JLabel cardImage;
-	private JPanel cardsContainer ;
 	public static Controller controller;
 	public MainMenu getCurrent() {
 		return this;
@@ -55,6 +31,8 @@ public class MainMenu extends JFrame{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(new Dimension(1344,768));
 		background.setLayout(new BorderLayout());
+		SoundFactory.playBG();
+		
 		JPanel leftSide = new JPanel(new BorderLayout());
 		leftSide.setPreferredSize(new Dimension(344,768));
 		leftSide.setOpaque(false);
@@ -82,16 +60,7 @@ public class MainMenu extends JFrame{
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				String soundName = "sounds/Draw Card (2).wav";
-				try{
-					AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
-					Clip clip = AudioSystem.getClip();
-					clip.open(audioInputStream);
-					clip.start();
-				}
-				catch(Exception e1){
-
-				}
+				SoundFactory.playFX();
 				((JComponent) e.getSource()).setForeground(Color.WHITE);
 			}
 
@@ -112,11 +81,7 @@ public class MainMenu extends JFrame{
 		});
 		
 		
-		back.setPreferredSize(new Dimension(400,100));
-		back.setForeground(Color.GRAY);
-		back.setContentAreaFilled(false);
-		back.setFocusPainted(false);
-		back.setBorderPainted(false);
+		decorButton(back);
 		
 		leftSide.add(cardImage, BorderLayout.NORTH);
 		leftSide.add(back,BorderLayout.SOUTH);
@@ -146,42 +111,14 @@ public class MainMenu extends JFrame{
 		menu.add(exit);
 		menu.setOpaque(false);
 		
-		exit.setPreferredSize(new Dimension(400,50));
-		exit.setForeground(Color.GRAY);
-		exit.setContentAreaFilled(false);
-		exit.setFocusPainted(false);
-		exit.setBorderPainted(false);
-		
-		mainmenu.setPreferredSize(new Dimension(400,50));
-		mainmenu.setForeground(Color.GRAY);
-		mainmenu.setContentAreaFilled(false);
-		mainmenu.setFocusPainted(false);
-		mainmenu.setBorderPainted(false);
-		
-		save.setPreferredSize(new Dimension(400,50));
-		save.setForeground(Color.GRAY);
-		save.setContentAreaFilled(false);
-		save.setFocusPainted(false);
-		save.setBorderPainted(false);
-		
-		deck.setPreferredSize(new Dimension(400,50));
-		deck.setForeground(Color.GRAY);
-		deck.setContentAreaFilled(false);
-		deck.setFocusPainted(false);
-		deck.setBorderPainted(false);
-		
-		land.setPreferredSize(new Dimension(400,50));
-		land.setForeground(Color.GRAY);
-		land.setContentAreaFilled(false);
-		land.setFocusPainted(false);
-		land.setBorderPainted(false);
-		
-		info.setPreferredSize(new Dimension(400,50));
-		info.setForeground(Color.GRAY);
-		info.setContentAreaFilled(false);
-		info.setFocusPainted(false);
-		info.setBorderPainted(false);
-		
+		decorButton(info);
+		decorButton(back);
+		decorButton(land);
+		decorButton(deck);
+		decorButton(save);
+		decorButton(mainmenu);
+		decorButton(exit);
+				
 		buttonsContainer.add(menu);
 		addTheActions(info,land,deck,save,mainmenu,exit,this);
 		
@@ -196,7 +133,11 @@ public class MainMenu extends JFrame{
 			info.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0) {
 					try {
-						new DuelMain();
+						//new DuelMain();
+						JOptionPane.showMessageDialog(null, 
+														"Nama : " + Main.p1.getName() + '\n' +
+														"Uang : " + Main.p1.getMoney() + '\n'
+								);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -218,14 +159,61 @@ public class MainMenu extends JFrame{
 			land.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0) {
 					try {
-						new Shop();
+						Land.openMap();
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						JOptionPane.showMessageDialog(null, e.getMessage());
 					}	
 				}
 			});
 			
+			save.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg0) {
+					try {
+						new Save("menu");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						//JOptionPane.showMessageDialog(null, e.getMessage());
+					}	
+				}
+			});
+			
+			mainmenu.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg0) {
+					try {
+						int dialogButton = JOptionPane.YES_NO_OPTION;
+						int dialogResult = JOptionPane.showConfirmDialog (null, "Save the game? or return to main menu","Warning",dialogButton);
+						if(dialogResult == JOptionPane.YES_OPTION){
+							new Save("interface");
+						} else if(dialogResult == JOptionPane.NO_OPTION){
+							new Interface();
+						}
+						current.dispose();
+						//new Shop();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						//JOptionPane.showMessageDialog(null, e.getMessage());
+					}	
+				}
+			});		
+			
+			exit.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg0) {
+					try {
+						int dialogButton = JOptionPane.YES_NO_OPTION;
+						int dialogResult = JOptionPane.showConfirmDialog (null, "Save the game?","Warning",dialogButton);
+						if(dialogResult == JOptionPane.YES_OPTION){
+							new Save("exit");
+						} else if(dialogResult == JOptionPane.NO_OPTION){
+							System.exit(ABORT);
+						}
+						current.dispose();
+						//new Shop();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						//JOptionPane.showMessageDialog(null, e.getMessage());
+					}	
+				}
+			});	
 			addMouseListeners(info);
 			addMouseListeners(land);
 			addMouseListeners(deck);
@@ -244,16 +232,7 @@ public class MainMenu extends JFrame{
 
 				@Override
 				public void mouseEntered(MouseEvent e) {
-					String soundName = "sounds/Draw Card (2).wav";
-					try{
-						AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
-						Clip clip = AudioSystem.getClip();
-						clip.open(audioInputStream);
-						clip.start();
-					}
-					catch(Exception e1){
-
-					}
+					SoundFactory.playFX();
 					b.setForeground(Color.WHITE);
 				}
 
@@ -272,5 +251,13 @@ public class MainMenu extends JFrame{
 					// TODO Auto-generated method stub	
 				}
 			});
+		}
+		
+		private void decorButton(JButton jb) {
+			jb.setPreferredSize(new Dimension(400,50));
+			jb.setForeground(Color.GRAY);
+			jb.setContentAreaFilled(false);
+			jb.setFocusPainted(false);
+			jb.setBorderPainted(false);
 		}
 	}

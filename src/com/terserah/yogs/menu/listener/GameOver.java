@@ -25,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.terserah.yogs.boards.player.Player;
+import com.terserah.yogs.maps.Land;
 
 
 public class GameOver  extends JFrame {
@@ -42,41 +43,25 @@ public class GameOver  extends JFrame {
 
 		JPanel header = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		header.setPreferredSize(new Dimension(300,150));
-		
-		JLabel congrats = new JLabel("Congratulations!");
-		congrats.setForeground(Color.WHITE);
-		
+				
 		JLabel winnerName = new JLabel(winner.getName()+" won the duel!");
 		winnerName.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,25));
 		winnerName.setForeground(Color.WHITE);
 		
-		header.add(congrats);
 		header.add(winnerName);
 		header.setOpaque(false);
 
-
-
-		JButton startGame = new JButton("New Game");
-		JButton exit = new JButton("Exit");
+		JButton exit = new JButton("Exit to Map");
 		
 
 
 		JPanel buttonsContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		buttonsContainer.setOpaque(false);
-		startGame.setPreferredSize(new Dimension(200,100));
 		exit.setPreferredSize(new Dimension(200,100));
-		startGame.setBorderPainted(false);
 		exit.setBorderPainted(false);
-		//startGame.setBackground(Color.BLACK);
-		startGame.setContentAreaFilled(false);
 		exit.setContentAreaFilled(false);
-		startGame.setFocusPainted(false);
 		exit.setFocusPainted(false);
-		//exit.setBackground(Color.BLACK);
-		startGame.setForeground(Color.GRAY);
 		exit.setForeground(Color.GRAY);
-
-		menu.add(startGame);
 		menu.add(exit);
 
 		menu.setOpaque(false);
@@ -87,7 +72,7 @@ public class GameOver  extends JFrame {
 		this.setUndecorated(true);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		String soundName = "sounds/Yu-Gi-Oh! Power of Chaos Yugi The Destiny - You've Won!.wav";
+		String soundName = "sounds/bg.wav";
 		try{
 			AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
 			Clip clip = AudioSystem.getClip();
@@ -98,8 +83,7 @@ public class GameOver  extends JFrame {
 			e1.printStackTrace();
 		}
 
-		addActionListeners(startGame,exit,this);
-		addMouseListeners(startGame);
+		addActionListeners(exit,this);
 		addMouseListeners(exit);
 	}
 
@@ -114,16 +98,7 @@ public class GameOver  extends JFrame {
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				String soundName = "sounds/Draw Card (2).wav";
-				try{
-					AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
-					Clip clip = AudioSystem.getClip();
-					clip.open(audioInputStream);
-					clip.start();
-				}
-				catch(Exception e1){
-
-				}
+				SoundFactory.playFX();
 				button.setForeground(Color.WHITE);
 
 			}
@@ -150,31 +125,14 @@ public class GameOver  extends JFrame {
 
 	}
 
-	private void addActionListeners(JButton startGame, JButton exit, GameOver gameOver) {
-
-		startGame.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				try {
-					new Main();
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				gameOver.dispose();
-
-			}
-
-		});
+	private void addActionListeners(JButton exit, GameOver gameOver) {
 
 		exit.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				System.exit(0);
-
+				gameOver.dispose();
+				Land.show();
 			}
 
 		});

@@ -11,7 +11,6 @@ public class GraveAndDeck1 extends GraveyardAndDeckPanel {
 		super(p);
 		this.add(grave,BorderLayout.NORTH);
 		this.add(deck,BorderLayout.SOUTH);
-		
 	}
 
 }

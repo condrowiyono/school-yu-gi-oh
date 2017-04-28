@@ -10,18 +10,19 @@ import com.terserah.yogs.cards.Card;
 import com.terserah.yogs.cards.Mode;
 import com.terserah.yogs.cards.MonsterCard;
 import com.terserah.yogs.cards.spells.SpellCard;
-import com.terserah.yogs.menu.listener.Main;
+import com.terserah.yogs.duel.gui.DuelMain;
+
 public class Computer extends Player {
 
-	public Computer(String name, int x, int y, int money, Deck deck, String rank) throws Exception {
-		super(name,x,y,money,deck,rank);
+	public Computer(String name, Deck deck, String rank) throws Exception {
+		super(name,deck,rank);
 	}
 	public Computer(String name, Deck deck) throws Exception {
 		super(name,deck);
 	}
 	
 	Timer t;
-
+	
 	public void computerTurn() throws Exception{
 
 		Computer p = this;
@@ -72,14 +73,28 @@ public class Computer extends Player {
 		});
 		t.setRepeats(true);
 		t.start();
+		
+
+
+		
 	}
 
 	public void mainPhase1() throws Exception{
-		for (Card c: this.getField().getHand())
+		for (Card c:this.getField().getHand())
 			System.out.println(c.getName());
 		System.out.println("---");
-
 		
+		SpellCard containsCardDestruction = containsCardDestruction();
+		SpellCard containsChangeOfHeart = containsChangeOfHeart();
+		SpellCard containsDarkHole = containsDarkHole();
+		SpellCard containsGracefulDice = containsGracefulDice();
+		SpellCard containsHarpieFeather = containsHarpieFeather();
+		SpellCard containsHeavyStorm = containsHeavyStorm();
+		SpellCard containsMagePower = containsMagePower();
+		SpellCard containsPotOfGreed= containsPotOfGreed();
+		SpellCard containsRaigeki= containsRaigeki();
+		SpellCard containsMonsterReborn  = containsMonsterReborn();
+
 		MonsterCard maxAttackMonsterInHand = maxAttackMonsterInHand();
 		MonsterCard maxAttackMonsterInHandOneSacrifice = maxAttackMonsterInHandOneSacrifice();
 		MonsterCard maxAttackMonsterInHandTwoSacrifice = maxAttackMonsterInHandTwoSacrifice();
@@ -93,10 +108,19 @@ public class Computer extends Player {
 		MonsterCard maxAttackMonsterInOpponentGraveyard = maxAttackMonsterInOpponentGraveyard();
 
 
-		/*if(containsPotOfGreed!=null){
+		if(containsPotOfGreed!=null){
 			if(this.getField().getDeck().getDeck().size()>3){
 				this.activateSpell(containsPotOfGreed, null);
 				
+				containsCardDestruction = containsCardDestruction();
+				containsChangeOfHeart = containsChangeOfHeart();
+				containsDarkHole = containsDarkHole();
+				containsGracefulDice = containsGracefulDice();
+				containsHarpieFeather = containsHarpieFeather();
+				containsHeavyStorm = containsHeavyStorm();
+				containsMagePower = containsMagePower();
+				containsPotOfGreed= containsPotOfGreed();
+				containsRaigeki= containsRaigeki();
 
 				maxAttackMonsterInHand = maxAttackMonsterInHand();
 				maxDefenseMonsterInHand = maxDefenseMonsterInHand();
@@ -105,8 +129,60 @@ public class Computer extends Player {
 				maxAttackMonsterInHandTwoSacrifice = maxAttackMonsterInHandTwoSacrifice();
 			}
 		}
-		*/
-		/*
+		if(containsHarpieFeather!=null){
+			if(Card.getBoard().getActivePlayer().getField().getSpellArea().size()>1){
+				this.activateSpell(containsHarpieFeather, null);
+				
+			}
+			containsHarpieFeather = containsHarpieFeather();
+		}
+		if(containsHeavyStorm!=null){
+			if(Card.getBoard().getActivePlayer().getField().getSpellArea().size()>=2 && this.getField().getSpellArea().size()<=1){
+				this.activateSpell(containsHeavyStorm, null);
+				
+			}
+			containsHeavyStorm = containsHeavyStorm();
+		}
+		if(containsRaigeki!=null){
+			boolean activated = false;
+			if(Card.getBoard().getOpponentPlayer().getField().getMonstersArea().size()>2)
+				activated = true;
+			else if(maxAttackMonsterInMyField == null && maxAttackMonsterInOpponentField!=null)
+				activated = true;
+			else if(maxAttackMonsterInMyField !=null && maxAttackMonsterInOpponentField !=null && maxAttackMonsterInMyField.getATK()<maxAttackMonsterInOpponentField.getATK())
+				activated = true;
+			if(activated){
+				this.activateSpell(containsRaigeki, null);
+				
+				maxAttackMonsterInOpponentField = maxAttackMonsterInOpponentField();
+				containsRaigeki = containsRaigeki();
+			}
+			
+		}
+
+		if(containsDarkHole != null){
+			boolean activated = false;
+			if(maxAttackMonsterInMyField == null && maxAttackMonsterInOpponentField!=null){
+				activated = true;
+			}
+			else if(maxAttackMonsterInMyField !=null && maxAttackMonsterInOpponentField !=null && maxAttackMonsterInMyField.getATK()<maxAttackMonsterInOpponentField.getATK() && maxAttackMonsterInHand==null){
+				activated = true;
+			}
+			else if(maxAttackMonsterInMyField !=null && maxAttackMonsterInOpponentField !=null  && maxAttackMonsterInHand!=null && maxAttackMonsterInMyField.getATK()<maxAttackMonsterInOpponentField.getATK() && maxAttackMonsterInOpponentField.getATK()>maxAttackMonsterInHand.getATK()){
+				activated = true;
+				
+			}
+			if(activated){
+				this.activateSpell(containsDarkHole, null);
+				System.out.println("ATTENTION: DARK HOLE!");
+				maxAttackMonsterInMyField = maxAttackMonsterInMyField();
+				maxAttackMonsterInOpponentField = maxAttackMonsterInOpponentField();
+				containsDarkHole = containsDarkHole();
+				
+			}
+			
+		}
+
 		if(containsChangeOfHeart!=null){
 			if(maxAttackMonsterInOpponentField!=null && maxAttackMonsterInOpponentField.getATK()>1500)
 			{
@@ -117,8 +193,6 @@ public class Computer extends Player {
 				
 			}
 		}
-		*/
-		
 		//summon monster
 		if(maxAttackMonsterInOpponentField==null){
 			//check two sacrifices
@@ -170,7 +244,9 @@ public class Computer extends Player {
 				}
 			}
 			if(maxAttackMonsterInHand!=null){
-				this.summonMonster(maxAttackMonsterInHand);	
+				this.summonMonster(maxAttackMonsterInHand);
+				
+
 			}
 
 		}
@@ -178,10 +254,10 @@ public class Computer extends Player {
 			//opponent monster area has monsters
 			if(maxAttackMonsterInMyField==null){
 				if(maxAttackMonsterInHand!=null){
-					if(maxAttackMonsterInHand.getATK()>=maxAttackMonsterInOpponentField.getATK())
+					if(maxAttackMonsterInHand.getATK()>=maxAttackMonsterInOpponentField.getATK() || (containsMagePower!=null && maxAttackMonsterInHand.getATK()*(500+countSpells())>=maxAttackMonsterInOpponentField.getATK()) || (containsGracefulDice!=null && maxAttackMonsterInHand.getATK()+400>=maxAttackMonsterInOpponentField.getATK()) )
 						this.summonMonster(maxAttackMonsterInHand);
 					else if(maxAttackMonsterInHand.getATK()<maxAttackMonsterInOpponentField.getATK()){
-						if(maxDefenseMonsterInHand.getATK()>maxAttackMonsterInOpponentField.getATK())
+						if(maxDefenseMonsterInHand.getDEF()>maxAttackMonsterInOpponentField.getATK())
 							setMonster(maxDefenseMonsterInHand);
 						else
 							setMonster(minAttackMonsterInHand);
@@ -190,7 +266,8 @@ public class Computer extends Player {
 			}
 			else{
 				//check two sacrifices
-				if(this.getField().getMonstersArea().size()>=2 && maxAttackMonsterInHandTwoSacrifice !=null && (maxAttackMonsterInHandTwoSacrifice.getATK()>maxAttackMonsterInOpponentField.getATK())){
+				if(this.getField().getMonstersArea().size()>=2 && maxAttackMonsterInHandTwoSacrifice !=null && (maxAttackMonsterInHandTwoSacrifice.getATK()>maxAttackMonsterInOpponentField.getATK()  || (containsMagePower!=null && maxAttackMonsterInHandTwoSacrifice.getATK()*(500+countSpells())>=maxAttackMonsterInOpponentField.getATK()) || (containsGracefulDice!=null && maxAttackMonsterInHandTwoSacrifice.getATK()+400>=maxAttackMonsterInOpponentField.getATK()) )){
+
 					MonsterCard min1=null;
 					MonsterCard min2=null;
 					int attack1 = 100000;
@@ -219,7 +296,7 @@ public class Computer extends Player {
 
 				}
 				//check one sacrifice
-				else if(this.getField().getMonstersArea().size()>=1 && maxAttackMonsterInHandOneSacrifice!=null && (maxAttackMonsterInHandOneSacrifice.getATK()>maxAttackMonsterInOpponentField.getATK() || maxAttackMonsterInMyField.getATK()>maxAttackMonsterInOpponentField.getATK())){
+				else if(this.getField().getMonstersArea().size()>=1 && maxAttackMonsterInHandOneSacrifice!=null && (maxAttackMonsterInHandOneSacrifice.getATK()>maxAttackMonsterInOpponentField.getATK() || maxAttackMonsterInMyField.getATK()>maxAttackMonsterInOpponentField.getATK()  || (containsMagePower!=null && maxAttackMonsterInHandOneSacrifice.getATK()*(500+countSpells())>=maxAttackMonsterInOpponentField.getATK()) || (containsGracefulDice!=null && maxAttackMonsterInHandOneSacrifice.getATK()+400>=maxAttackMonsterInOpponentField.getATK()) )){
 					MonsterCard min1=null;
 					int attack1 = 100000;
 
@@ -238,7 +315,7 @@ public class Computer extends Player {
 						minAttackMonsterInHand = minAttackMonsterInHand();
 					}
 				}
-				if(maxAttackMonsterInHand!=null && (maxAttackMonsterInHand.getATK()>maxAttackMonsterInOpponentField.getATK() || maxAttackMonsterInMyField.getATK()>maxAttackMonsterInOpponentField.getATK() )){
+				if(maxAttackMonsterInHand!=null && (maxAttackMonsterInHand.getATK()>maxAttackMonsterInOpponentField.getATK() || maxAttackMonsterInMyField.getATK()>maxAttackMonsterInOpponentField.getATK()  || (containsMagePower!=null && maxAttackMonsterInHand.getATK()*(500+countSpells())>=maxAttackMonsterInOpponentField.getATK()) || (maxAttackMonsterInHand!=null && maxAttackMonsterInHandOneSacrifice.getATK()+400>=maxAttackMonsterInOpponentField.getATK()))){
 					this.summonMonster(maxAttackMonsterInHand);
 					maxAttackMonsterInHand = maxAttackMonsterInHand();
 					maxAttackMonsterInMyField = maxAttackMonsterInMyField();
@@ -254,7 +331,7 @@ public class Computer extends Player {
 		maxAttackMonsterInMyField = maxAttackMonsterInMyField();
 		minAttackMonsterInHand = minAttackMonsterInHand();
 		
-		/*
+
 		if(containsMonsterReborn!=null){
 			if(maxAttackMonsterInMyGraveyard!=null || maxAttackMonsterInOpponentGraveyard!=null){
 				MonsterCard max;
@@ -287,9 +364,58 @@ public class Computer extends Player {
 
 			}
 		}
-		*/
+		if(containsGracefulDice!=null){
+			if(maxAttackMonsterInOpponentField==null && maxAttackMonsterInMyField!=null && maxAttackMonsterInMyField.getATK()>1500){
+				this.activateSpell(containsGracefulDice, null);
+				
+			}
+			else if(maxAttackMonsterInOpponentField!=null && maxAttackMonsterInMyField!=null && maxAttackMonsterInOpponentField.getATK()<=maxAttackMonsterInMyField.getATK()+500){
+				this.activateSpell(containsGracefulDice, null);
+				
+			}
+			containsGracefulDice = containsGracefulDice();
+		}
+
+
+		if(containsMagePower!=null){
+			if(maxAttackMonsterInMyField!=null){
+				ArrayList<SpellCard> spells = new ArrayList<SpellCard>();
+				for(Card c:this.getField().getHand()){
+					if(c instanceof SpellCard && c!=containsMagePower){
+						spells.add((SpellCard)c);
+					}
+				}
+				while(!spells.isEmpty()){
+					this.setSpell(spells.remove(0));
+				}
+				this.activateSpell(containsMagePower, maxAttackMonsterInMyField);
+				
+				containsMagePower = containsMagePower();
+			}
+		}
+		if(containsCardDestruction!=null){
+			if(this.getField().getHand().size()>1 && this.getField().getDeck().getDeck().size()>this.getField().getHand().size()+2 && (maxAttackMonsterInHand==null || maxAttackMonsterInHand.getATK()<2000) && maxAttackMonsterInHandOneSacrifice==null && maxAttackMonsterInHandTwoSacrifice==null){
+				if(containsRaigeki!=null)
+					this.setSpell(containsRaigeki);
+				if(containsDarkHole!=null)
+					this.setSpell(containsDarkHole);
+				if(containsMagePower!=null)
+					this.setSpell(containsMagePower);
+				if(containsMonsterReborn!=null)
+					this.setSpell(containsMonsterReborn);
+				this.activateSpell(containsCardDestruction, null);
+				
+
+				minAttackMonsterInHand = minAttackMonsterInHand();
+				maxAttackMonsterInHand = maxAttackMonsterInHand();
+				maxDefenseMonsterInHand = maxDefenseMonsterInHand();
+				containsCardDestruction = containsCardDestruction();
+			}
+
+		}
 
 		//switch monsters' mode
+
 		if(maxAttackMonsterInMyField!=null && maxAttackMonsterInOpponentField!=null && maxAttackMonsterInMyField.getATK()<maxAttackMonsterInOpponentField.getATK()){
 			for (MonsterCard c:this.getField().getMonstersArea())
 				if(c.getMode()==Mode.ATTACK){
@@ -304,15 +430,14 @@ public class Computer extends Player {
 					
 				}
 		}
+
+
 	}
 
 
 
 	private int countSpells() {
 		int count = 0;
-		for(Card c: this.getField().getHand())
-			if(c instanceof SpellCard)
-				count++;
 		return count;
 	}
 
@@ -428,21 +553,46 @@ public class Computer extends Player {
 		}
 		return max;
 	}
-	/*
-	private SpellCard containsRaigeki() {
 
-		for (Card c:this.getField().getHand()){
-			if (c.getName().equals("Raigeki"))
-				return (Raigeki)c;
-		}
-		for(SpellCard c:this.getField().getSpellArea()){
-			if(c.getName().equals("Raigeki"))
-				return c;
-		}
+	private SpellCard containsRaigeki() {
 		return null;
 	}
-	*/
-	
+
+	private SpellCard containsPotOfGreed() {
+		return null;
+	}
+
+	private SpellCard containsMagePower() {
+		return null;
+	}
+	private SpellCard containsMonsterReborn() {
+		return null;
+	}
+
+	private SpellCard containsHeavyStorm() {
+		return null;
+	}
+
+	private SpellCard containsHarpieFeather() {
+		return null;
+	}
+
+	private SpellCard containsGracefulDice() {
+		return null;
+	}
+
+	private SpellCard containsDarkHole() {
+		return null;
+	}
+
+	private SpellCard containsChangeOfHeart() {
+		return null;
+	}
+
+	private SpellCard containsCardDestruction() {
+		return null;
+	}
+
 	public void battlePhase() throws Exception{
 		ArrayList<MonsterCard> myMonsters = new ArrayList<MonsterCard>();
 		for(MonsterCard c:this.getField().getMonstersArea())
@@ -518,18 +668,19 @@ public class Computer extends Player {
 
 	public void updateGUI() {
 		try{
-			Main.controller.getActiveGraveAndDeck().updatePanel();
-			Main.controller.getOpponentGraveAndDeck().updatePanel();
-			Main.controller.getActiveHandPanel().updatePanel(Main.controller.getActiveHandPanel().getPlayer());
-			Main.controller.getOpponentHandPanel().updatePanel(Main.controller.getOpponentHandPanel().getPlayer());
-			Main.controller.getActiveInfoPanel().updatePanel(Main.controller.getActiveInfoPanel().getPlayer());
-			Main.controller.getOpponentInfoPanel().updatePanel(Main.controller.getOpponentInfoPanel().getPlayer());
-			Main.controller.getActiveMonstersPanel().updatePanel(Main.controller.getActiveMonstersPanel().getPlayer());
-			Main.controller.getOpponentMonstersPanel().updatePanel(Main.controller.getOpponentMonstersPanel().getPlayer());
-			Main.controller.getActiveSpellsPanel().updatePanel(Main.controller.getActiveSpellsPanel().getPlayer());
-			Main.controller.getOpponentSpellsPanel().updatePanel(Main.controller.getOpponentSpellsPanel().getPlayer());
-			Main.controller.getPhasePanel().updatePanel();
-			Main.controller.addActionListenersToButtons();
+			
+			DuelMain.controller.getActiveGraveAndDeck().updatePanel();
+			DuelMain.controller.getOpponentGraveAndDeck().updatePanel();
+			DuelMain.controller.getActiveHandPanel().updatePanel(DuelMain.controller.getActiveHandPanel().getPlayer());
+			DuelMain.controller.getOpponentHandPanel().updatePanel(DuelMain.controller.getOpponentHandPanel().getPlayer());
+			DuelMain.controller.getActiveInfoPanel().updatePanel(DuelMain.controller.getActiveInfoPanel().getPlayer());
+			DuelMain.controller.getOpponentInfoPanel().updatePanel(DuelMain.controller.getOpponentInfoPanel().getPlayer());
+			DuelMain.controller.getActiveMonstersPanel().updatePanel(DuelMain.controller.getActiveMonstersPanel().getPlayer());
+			DuelMain.controller.getOpponentMonstersPanel().updatePanel(DuelMain.controller.getOpponentMonstersPanel().getPlayer());
+			DuelMain.controller.getActiveSpellsPanel().updatePanel(DuelMain.controller.getActiveSpellsPanel().getPlayer());
+			DuelMain.controller.getOpponentSpellsPanel().updatePanel(DuelMain.controller.getOpponentSpellsPanel().getPlayer());
+			DuelMain.controller.getPhasePanel().updatePanel();
+			DuelMain.controller.addActionListenersToButtons();
 		}
 		catch(Exception e)
 		{

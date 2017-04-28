@@ -2,6 +2,7 @@ package com.terserah.yogs.boards.player;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -13,9 +14,25 @@ import org.json.simple.parser.ParseException;
 import com.terserah.yogs.cards.CardFactory;
 
 public class PlayerFactory {
-	private ArrayList<Player> allPlayer = new ArrayList<Player>();
-	private static final PlayerFactory INSTANCE = new PlayerFactory ();
+	public static ArrayList<Player> allPlayer = new ArrayList<Player>();
+	private static PlayerFactory instance = null;
+	
 	private PlayerFactory() {
+		importPlayer();
+	}
+	
+	public static PlayerFactory getInstance() {
+		if(instance == null) {
+	         instance = new PlayerFactory();
+	      }
+	      return instance;
+	}
+	
+	public ArrayList<Player> getAllPlayer() {
+		return allPlayer;
+	}
+	
+	public void importPlayer() {
 		JSONParser parser = new JSONParser();
         System.out.println();
         try {
@@ -25,16 +42,15 @@ public class PlayerFactory {
 
         	JSONArray player = (JSONArray) jsonObject.get("save");
         	for (int i = 0; i<player.size();i++) {
-             String name, lastplayed;
-             Long x,y,money ;
-             
+             String name;
+             Long money ;
+             Double x,y;
              JSONObject jsonAnggota = (JSONObject) player.get(i);
              JSONObject biodata = (JSONObject) jsonAnggota.get("biodata");
                 name = (String) biodata.get("name");
-                x = (Long) biodata.get("x");
-                y = (Long) biodata.get("y");
+                x = (Double) biodata.get("x");
+                y = (Double) biodata.get("y");
                 money = (Long) biodata.get("money");
-                lastplayed = (String) biodata.get("lastplayed");
             JSONObject deck = (JSONObject) jsonAnggota.get("deck");
             //Array List<Card>
             Deck playerDeck = null;
@@ -106,14 +122,79 @@ public class PlayerFactory {
 	   ex.printStackTrace();
 	} catch (ParseException ex) {
 	   ex.printStackTrace();
-	}       
+	}  
 	}
-	
-	public static PlayerFactory getInstance() {
-		return INSTANCE;
-	}
-	
-	public ArrayList<Player> getAllPlayer() {
-		return allPlayer;
-	}
+	public static void exportPlayer(ArrayList<Player> allPlayer) {
+		JSONObject obj = new JSONObject();
+        obj.put("count", allPlayer.size() );
+        JSONArray duelistmember = new JSONArray();
+        for (int o=0; o<allPlayer.size();o++) {
+            JSONObject member = new JSONObject();
+            //Tingkat 2
+            JSONObject biodata = new JSONObject();
+            
+            biodata.put("name", allPlayer.get(o).getName());
+            biodata.put("x",allPlayer.get(o).getPosisi().getX());
+            biodata.put("y", allPlayer.get(o).getPosisi().getY());
+            biodata.put("money", allPlayer.get(o).getMoney());
+            JSONObject deck = new JSONObject();
+            JSONObject allcard = new JSONObject();
+                //Tingkat 4
+                JSONArray monstertype = new JSONArray();
+                JSONArray spelltype = new JSONArray();
+                JSONArray traptype = new JSONArray();
+                //Array monster dari deck pemain
+                for (int i = 0; i< allPlayer.get(o).getDeck().getByJenis("Monster").getDeck().size();i++) {
+                    monstertype.add(allPlayer.get(o).getDeck().getByJenis("Monster").getDeck().get(i).getName());
+                }
+                for (int i = 0; i< allPlayer.get(o).getDeck().getByJenis("Spell").getDeck().size();i++) {
+                    spelltype.add(allPlayer.get(o).getDeck().getByJenis("Spell").getDeck().get(i).getName());
+                }
+                for (int i = 0; i< allPlayer.get(o).getDeck().getByJenis("Trap").getDeck().size();i++) {
+                    traptype.add(allPlayer.get(o).getDeck().getByJenis("Trap").getDeck().get(i).getName());
+                }
+
+            deck.put("monster", monstertype);
+            deck.put("trap", traptype);
+            deck.put("spell", spelltype);
+            //Tingkat 4
+                JSONArray allmonstertype = new JSONArray();
+                JSONArray allspelltype = new JSONArray();
+                JSONArray alltraptype = new JSONArray();
+                //Array monster dari deck pemain
+                for (int i = 0; i< allPlayer.get(o).getAllCard().getByJenis("Monster").getDeck().size();i++) {
+                    allmonstertype.add(allPlayer.get(o).getAllCard().getByJenis("Monster").getDeck().get(i).getName());
+                }
+                for (int i = 0; i< allPlayer.get(o).getAllCard().getByJenis("Spell").getDeck().size();i++) {
+                    allspelltype.add(allPlayer.get(o).getAllCard().getByJenis("Spell").getDeck().get(i).getName());
+                }
+                for (int i = 0; i< allPlayer.get(o).getAllCard().getByJenis("Trap").getDeck().size();i++) {
+                    alltraptype.add(allPlayer.get(o).getAllCard().getByJenis("Trap").getDeck().get(i).getName());
+                }
+
+            allcard.put("monster", allmonstertype);
+            allcard.put("trap", alltraptype);
+            allcard.put("spell", allspelltype);
+
+            member.put("allcard", allcard);
+            member.put("biodata", biodata);
+            member.put("deck", deck);
+            
+            duelistmember.add(member);
+        }
+        obj.put("save", duelistmember);
+
+        try {
+            FileWriter file = new FileWriter("save/player.json");
+            file.write(obj.toJSONString());
+            file.flush();
+            file.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //System.out.print(obj);
+
+        }
 }

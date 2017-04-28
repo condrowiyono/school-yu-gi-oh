@@ -24,21 +24,10 @@ public class MonsterButton extends CardButton {
 		super();
 		this.monster = monster;
 
-		//this.setBorder(new EmptyBorder(10, 10, 10, 10) );
-		//this.setBorder(BorderFactory.createEmptyBorder(20, 20,20,20));
 		if(monster!=null){
-			//this.setText(monster.getName() + "\n" + monster.getAttackPoints() + "\n" + monster.getDefensePoints() + "\n" + monster.getLevel());
-
 			Image cardImage = this.monster.getImage().getScaledInstance(68, 100,Image.SCALE_SMOOTH);
 			this.setIcon(new ImageIcon(cardImage));
-			//this.setText(monster.getAttackPoints() + " " + monster.getDefensePoints());
-			//  System.out.println(monster.getName()+" "+monster.getAttackPoints() + " " + monster.getDefensePoints());
-			//this.setVerticalTextPosition(SwingConstants.CENTER);
-			//this.setHorizontalTextPosition(SwingConstants.CENTER);
-			//System.out.println(this.getActionListeners().length);
 			this.setForeground(Color.WHITE);
-			this.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
-
 		}
 	}
 

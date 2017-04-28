@@ -36,11 +36,17 @@ import com.terserah.yogs.menu.gui.WrapLayout;
 import com.terserah.yogs.menu.listener.CardList;
 import com.terserah.yogs.menu.listener.Interface;
 import com.terserah.yogs.menu.listener.Main;
+import com.terserah.yogs.menu.listener.SoundFactory;
 
 public class DeckEditor extends JFrame {
 	JLabel cardImage;
 	private JPanel cardsContainer ;
 	private JPanel cardsContainer2 ;
+	private ArrayList<MonsterButton> monsters = new ArrayList<MonsterButton>();
+	private ArrayList<SpellButton> spells = new ArrayList<SpellButton>();
+	private ArrayList<MonsterButton> monsters2 = new ArrayList<MonsterButton>();
+	private ArrayList<SpellButton> spells2 = new ArrayList<SpellButton>();
+	private DeckEditor current = this;
 	
 	public DeckEditor() throws Exception {
 		JLabel background = new JLabel(new ImageIcon(ImageIO.read(new File("art/backgrounds/main5Updated.jpg"))));
@@ -49,70 +55,23 @@ public class DeckEditor extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(new Dimension(1344,768));
 		background.setLayout(new BorderLayout());
+		SoundFactory.playBG();
+		
 		JPanel leftSide = new JPanel(new BorderLayout());
 		leftSide.setPreferredSize(new Dimension(344,768));
 		leftSide.setOpaque(false);
 		cardImage = new JLabel(new ImageIcon(ImageIO.read(new File("art/cards/back.png")).getScaledInstance(272, 400, Image.SCALE_SMOOTH)));
 		JButton back = new JButton("Back");
-		DeckEditor current = this;
-		back.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					new MainMenu();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				current.dispose();
-			}
-		});
-		
-		back.addMouseListener(new MouseListener(){
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				String soundName = "sounds/Draw Card (2).wav";
-				try{
-					AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
-					Clip clip = AudioSystem.getClip();
-					clip.open(audioInputStream);
-					clip.start();
-				}
-				catch(Exception e1){
-
-				}
-				((JComponent) e.getSource()).setForeground(Color.WHITE);
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				((JComponent) e.getSource()).setForeground(Color.GRAY);
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-			}
-		});
+		JLabel count = new JLabel("Count");
+		backAction(back);
 		
 		
-		back.setPreferredSize(new Dimension(400,100));
-		back.setForeground(Color.GRAY);
-		back.setContentAreaFilled(false);
-		back.setFocusPainted(false);
-		back.setBorderPainted(false);
+		count.setPreferredSize(new Dimension(400,100));
+		count.setForeground(Color.GRAY);
+		count.setHorizontalAlignment(count.CENTER);
 		
 		leftSide.add(cardImage, BorderLayout.NORTH);
+		leftSide.add(count, BorderLayout.CENTER);
 		leftSide.add(back,BorderLayout.SOUTH);
 		
 		JPanel rightSide = new JPanel(new FlowLayout(FlowLayout.LEADING));
@@ -122,50 +81,44 @@ public class DeckEditor extends JFrame {
 		cardsContainer = new JPanel(new WrapLayout());
 		cardsContainer.setOpaque(false);
 		cardsContainer.setAutoscrolls(true);
-		
-	
-		MouseListener ml = new MouseListener(){
 
+		//all deck
+		MouseListener ml = new MouseListener(){
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
 					new DeckEditor();
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
+				SoundFactory.playFX();
+				int countByName = 0;
 				if(e.getSource() instanceof MonsterButton){
 					MonsterCard monster = ((MonsterButton)e.getSource()).getMonster();
 					updateImage(monster);
+					countByName = Main.p1.getDeck().countbyName(((MonsterButton)e.getSource()).getMonster().getName());
 				}
 				else if(e.getSource() instanceof SpellButton){
 					SpellCard spell = ((SpellButton)e.getSource()).getSpell();
 					updateImage(spell);
+					countByName = Main.p1.getDeck().countbyName(((SpellButton)e.getSource()).getSpell().getName());
 				} 
+				count.setText(Integer.toString(countByName));
 			}
 
 			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-			}
+			public void mouseExited(MouseEvent e) {}
 
 			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-			}
+			public void mousePressed(MouseEvent e) {}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub	
-			}
+			public void mouseReleased(MouseEvent e) {}
 		};
-		
-		ArrayList<MonsterButton> monsters = new ArrayList<MonsterButton>();
-		ArrayList<SpellButton> spells = new ArrayList<SpellButton>();
 
 		//untuk playerdeck
 		for (int i=0;i<Main.p1.getDeck().getDeck().size();i++){
@@ -181,8 +134,8 @@ public class DeckEditor extends JFrame {
 					public void actionPerformed(ActionEvent arg0) {
 						try {
 							Main.p1.getDeck().getDeck().remove(monsterButton.getMonster());
+							Main.p1.getAllCard().getDeck().add(monsterButton.getMonster());
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							JOptionPane.showMessageDialog(null, e.getMessage());
 						}	
 					}
@@ -200,8 +153,8 @@ public class DeckEditor extends JFrame {
 					public void actionPerformed(ActionEvent arg0) {
 						try {
 							Main.p1.getDeck().getDeck().remove(spellButton.getSpell());
+							Main.p1.getAllCard().getDeck().add(spellButton.getSpell());
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							JOptionPane.showMessageDialog(null, e.getMessage());
 						}	
 					}
@@ -215,54 +168,48 @@ public class DeckEditor extends JFrame {
 		scrollList1.setOpaque(false);
 		scrollList1.getViewport().setBackground(Color.BLACK);
 		
-		cardsContainer2 = new JPanel(new WrapLayout());
-		cardsContainer2.setOpaque(false);
-		cardsContainer2.setAutoscrolls(true);
-		
-	
+		//all deck
 		MouseListener ml2 = new MouseListener(){
-
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
 				try {
 					new DeckEditor();
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
+				SoundFactory.playFX();
+				int countByName = 0;
 				if(e.getSource() instanceof MonsterButton){
 					MonsterCard monster = ((MonsterButton)e.getSource()).getMonster();
 					updateImage(monster);
+					countByName = Main.p1.getAllCard().countbyName(((MonsterButton)e.getSource()).getMonster().getName());
 				}
 				else if(e.getSource() instanceof SpellButton){
 					SpellCard spell = ((SpellButton)e.getSource()).getSpell();
 					updateImage(spell);
+					countByName = Main.p1.getAllCard().countbyName(((SpellButton)e.getSource()).getSpell().getName());
 				} 
+				count.setText(Integer.toString(countByName));
 			}
 
 			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-			}
+			public void mouseExited(MouseEvent e) {}
 
 			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-			}
+			public void mousePressed(MouseEvent e) {}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub	
-			}
+			public void mouseReleased(MouseEvent e) {}
 		};
+
+		cardsContainer2 = new JPanel(new WrapLayout());
+		cardsContainer2.setOpaque(false);
+		cardsContainer2.setAutoscrolls(true);
 		
-		ArrayList<MonsterButton> monsters2 = new ArrayList<MonsterButton>();
-		ArrayList<SpellButton> spells2 = new ArrayList<SpellButton>();
 		//untuk allCard
 		for (int i=0;i<Main.p1.getAllCard().getDeck().size();i++){
 			if ((Main.p1.getAllCard().getDeck().get(i).getJenis()).equals("Monster")) {
@@ -275,9 +222,13 @@ public class DeckEditor extends JFrame {
 					monsterButton.addActionListener(new ActionListener(){
 						public void actionPerformed(ActionEvent arg0) {
 							try {
-								Main.p1.getDeck().getDeck().add(monsterButton.getMonster());
+								if (Main.p1.getDeck().countbyName(monsterButton.getMonster().getName()) <= 2 ) {
+									Main.p1.getDeck().getDeck().add(monsterButton.getMonster());
+									Main.p1.getAllCard().getDeck().remove(monsterButton.getMonster());
+								} else {
+									JOptionPane.showMessageDialog(null, "Sudah ada 2 kartu di deck");
+								}
 							} catch (Exception e) {
-								// TODO Auto-generated catch block
 								JOptionPane.showMessageDialog(null, e.getMessage());
 							}	
 						}
@@ -293,7 +244,12 @@ public class DeckEditor extends JFrame {
 					spellButton.addActionListener(new ActionListener(){
 						public void actionPerformed(ActionEvent arg0) {
 							try {
-								Main.p1.getDeck().getDeck().add(spellButton.getSpell());
+								if (Main.p1.getDeck().countbyName(spellButton.getSpell().getName()) <= 2 ) {
+									Main.p1.getDeck().getDeck().add(spellButton.getSpell());
+									Main.p1.getAllCard().getDeck().remove(spellButton.getSpell());
+								} else {
+									JOptionPane.showMessageDialog(null, "Sudah ada 2 kartu di deck");
+								}
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								JOptionPane.showMessageDialog(null, e.getMessage());
@@ -303,7 +259,6 @@ public class DeckEditor extends JFrame {
 			}
 		}
 
-		
 		JScrollPane scrollList2 = new JScrollPane(cardsContainer2);
 		scrollList2.setPreferredSize(new Dimension(350,760));
 		scrollList2.setOpaque(false);
@@ -323,7 +278,57 @@ public class DeckEditor extends JFrame {
 			image = ((SpellCard)c).getImage();
 		else 
 			image = ((MonsterCard)c).getImage();
-		cardImage.setIcon(new ImageIcon(image.getScaledInstance(272, 400, Image.SCALE_SMOOTH)));
 		
+		cardImage.setIcon(new ImageIcon(image.getScaledInstance(272, 400, Image.SCALE_SMOOTH)));	
 	}
+	
+	private void backAction(JButton jb) {
+		jb.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					if (Main.p1.getDeck().getDeck().size()>=10 &&
+						Main.p1.getDeck().getDeck().size()<=15 	) 
+						new MainMenu();
+					else {
+						JOptionPane.showMessageDialog(null, "Jumlah kartu di deck salah. Pastikan kartu di deck 10-15");
+						new DeckEditor();
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				current.dispose();
+			}
+		});
+		
+		jb.addMouseListener(new MouseListener(){
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				SoundFactory.playFX();
+				((JComponent) e.getSource()).setForeground(Color.WHITE);
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				((JComponent) e.getSource()).setForeground(Color.GRAY);
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) {}
+		});
+		
+		jb.setPreferredSize(new Dimension(400,100));
+		jb.setForeground(Color.GRAY);
+		jb.setContentAreaFilled(false);
+		jb.setFocusPainted(false);
+		jb.setBorderPainted(false);
+	}
+
 }

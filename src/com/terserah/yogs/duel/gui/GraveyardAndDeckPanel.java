@@ -20,8 +20,8 @@ import com.terserah.yogs.cards.spells.SpellCard;
 public class GraveyardAndDeckPanel extends JPanel {
 	Player p;
 	GraveyardButton grave;
+	DeckButton deck;
 	
-
 	public Player getP() {
 		return p;
 	}
@@ -34,19 +34,14 @@ public class GraveyardAndDeckPanel extends JPanel {
 		return deck;
 	}
 
-	DeckButton deck;
 	public GraveyardAndDeckPanel(Player p) throws IOException{
 		super();
 		this.p = p;
 		this.setOpaque(false);
-
 		this.setPreferredSize(new Dimension(68,260));
 		this.setLayout(new BorderLayout());
-
 		grave = new GraveyardButton(p);
 		deck = new DeckButton(p);
-
-
 	}
 
 	public void updatePanel() throws IOException{
@@ -68,8 +63,6 @@ public class GraveyardAndDeckPanel extends JPanel {
 				Image cardImage = graveyardImage.getScaledInstance(80, 110,Image.SCALE_SMOOTH);
 				this.grave.setIcon(new ImageIcon(cardImage));
 			}
-			
-			
 		}
 		else{
 			BufferedImage graveyardImage = ImageIO.read(new File("art/cards/graveyard.jpg"));

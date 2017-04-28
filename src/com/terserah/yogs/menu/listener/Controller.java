@@ -40,10 +40,14 @@ public class Controller  implements ActionListener,MouseListener{
 	CardButton thirdClick;
 	static String response;
 	DuelMain main;
-	public Controller(GamePanel game,Board board) throws Exception {
+	public Controller(GamePanel game,Board board,DuelMain main) throws Exception {
 		this.game = game;
 		this.board = board;
+		this.main = main;
 
+		//addActionListenerToBoard();
+		//addActionListenerToBoard();
+		//addActionListenerToPhase();
 		addActionListenersToButtons();
 	}
 
@@ -121,6 +125,12 @@ public class Controller  implements ActionListener,MouseListener{
 			phasePanel.getEndTurn().addActionListener(this);
 		}
 
+		//for (SpellButton s: field.getSpellButtons())
+		//s.addActionListener(this);
+
+		//graveyard.getGraveyardButton().addActionListener(this);
+
+
 
 	}
 
@@ -136,12 +146,14 @@ public class Controller  implements ActionListener,MouseListener{
 				JOptionPane.showMessageDialog(null,e1.getMessage());
 			}
 			if(p != Card.getBoard().getActivePlayer()){
+				if(DuelMain.gameMode==1){
 					try {
-						((Computer)  Card.getBoard().getActivePlayer()).computerTurn();
+						((Computer)Card.getBoard().getActivePlayer()).computerTurn();
 					} catch (Exception e2) {
 						// TODO Auto-generated catch block
 						JOptionPane.showMessageDialog(null,e2.getMessage());
 					}
+				}
 			}
 			try{
 				getActiveHandPanel().updatePanel(getActiveHandPanel().getPlayer());
@@ -175,9 +187,9 @@ public class Controller  implements ActionListener,MouseListener{
 				// TODO Auto-generated catch block
 				JOptionPane.showMessageDialog(null,e1.getMessage());
 			}
-			if(main.gameMode==1){
+			if(DuelMain.gameMode==1){
 				try {
-					((Computer) Card.getBoard().getActivePlayer()).computerTurn();
+					((Computer)Card.getBoard().getActivePlayer()).computerTurn();
 				} catch (Exception e2) {
 					// TODO Auto-generated catch block
 					JOptionPane.showMessageDialog(null,e2.getMessage());
@@ -345,28 +357,6 @@ public class Controller  implements ActionListener,MouseListener{
 							firstClick=null;
 						}
 						else{
-							if(!(clickedCard instanceof ChangeOfHeart)){
-								try {
-									//System.out.println(clickedCard.getClass());
-									Card.getBoard().getActivePlayer().activateSpell(clickedCard, null);
-
-								} catch (Exception e1) {
-									// TODO Auto-generated catch block
-									JOptionPane.showMessageDialog(null,e1.getMessage());
-								}
-
-								firstClick=null;
-								secondClick=null;
-								thirdClick=null;
-							}
-							else{
-
-								if(!checkChangeOfHeartAndMagePower(clickedCard))
-								{
-									firstClick=null;
-									return;
-								}
-							}
 						}
 						try{
 							getActiveGraveAndDeck().updatePanel();
@@ -394,42 +384,6 @@ public class Controller  implements ActionListener,MouseListener{
 					if(activateChoice!=0){
 						firstClick=null;
 						return;
-					}
-					if(!(clickedCard instanceof ChangeOfHeart)){
-						try {
-							Card.getBoard().getActivePlayer().activateSpell(clickedCard, null);
-						} catch (Exception e1) {
-
-							JOptionPane.showMessageDialog(null,e1.getMessage());
-						}
-						try{
-							getActiveGraveAndDeck().updatePanel();
-							getOpponentGraveAndDeck().updatePanel();
-							getActiveHandPanel().updatePanel(getActiveHandPanel().getPlayer());
-							getOpponentHandPanel().updatePanel(getOpponentHandPanel().getPlayer());
-							getActiveMonstersPanel().updatePanel(getActiveMonstersPanel().getPlayer());
-							getOpponentMonstersPanel().updatePanel(getOpponentMonstersPanel().getPlayer());
-							getActiveSpellsPanel().updatePanel(getActiveSpellsPanel().getPlayer());
-							getOpponentSpellsPanel().updatePanel(getOpponentSpellsPanel().getPlayer());
-							getActiveInfoPanel().updatePanel(getActiveInfoPanel().getPlayer());
-							getOpponentInfoPanel().updatePanel(getOpponentInfoPanel().getPlayer());
-							addActionListenersToButtons();
-						}
-						catch(Exception e1){
-							JOptionPane.showMessageDialog(null,e1.getMessage());
-						}
-						firstClick=null;
-						secondClick=null;
-						thirdClick=null;
-					}
-					else{
-						if(!checkChangeOfHeartAndMagePower(clickedCard))
-						{
-							firstClick=null;
-							secondClick=null;
-							thirdClick=null;
-							return;
-						}
 					}
 
 				}
@@ -461,13 +415,6 @@ public class Controller  implements ActionListener,MouseListener{
 				MonsterCard clickedMonster = ((MonsterButton)secondClick).getMonster();
 				if(clickedSpell instanceof ChangeOfHeart && !Card.getBoard().getOpponentPlayer().getField().getMonstersArea().contains(clickedMonster)){
 					JOptionPane.showMessageDialog(null,"You can only activate this card on an opponent monster!");
-					firstClick=null;
-					secondClick=null;
-					return;
-				}
-				if(!Card.getBoard().getOpponentPlayer().getField().getMonstersArea().contains(clickedMonster) && !Card.getBoard().getActivePlayer().getField().getMonstersArea().contains(clickedMonster))
-				{
-					JOptionPane.showMessageDialog(null,"You can only activate this card on an monster on the field!");
 					firstClick=null;
 					secondClick=null;
 					return;
@@ -622,32 +569,6 @@ public class Controller  implements ActionListener,MouseListener{
 			}
 		}
 	}
-	private boolean checkChangeOfHeartAndMagePower(SpellCard c) {
-		if (c instanceof ChangeOfHeart){
-			if(Card.getBoard().getOpponentPlayer().getField().getMonstersArea().size()==0){
-				JOptionPane.showMessageDialog(null, "Opponent has no monsters!");
-				return false;
-			}
-			else{
-				JOptionPane.showMessageDialog(null, "Please select a monster");
-				return true;
-			}
-
-		}
-		else{
-			if(Card.getBoard().getActivePlayer().getField().getMonstersArea().size()==0 && Card.getBoard().getOpponentPlayer().getField().getMonstersArea().size()==0)
-			{
-				JOptionPane.showMessageDialog(null, "There are no monsters on the field");
-				return false;
-			}
-			else
-			{
-				JOptionPane.showMessageDialog(null, "Please select a monster");
-				return true;
-			}
-		}
-
-	}
 
 	private void switchMonsterMode(MonsterCard clickedMonster) throws Exception {
 		if(Card.getBoard().getActivePlayer().switchMonsterMode(clickedMonster))
@@ -737,6 +658,9 @@ public class Controller  implements ActionListener,MouseListener{
 
 	}
 
+
+
+
 	public int sacrifices(MonsterCard monster) { 
 		if(monster.getLevel()<=4) return 0 ;
 		else 
@@ -758,6 +682,7 @@ public class Controller  implements ActionListener,MouseListener{
 	}
 	public HandPanel getActiveHandPanel() throws Exception{
 		if(Card.getBoard().getWinner()!=null){
+
 			declareWinner();
 			winnerDeclared = true;
 		}
@@ -774,6 +699,7 @@ public class Controller  implements ActionListener,MouseListener{
 	}
 	public InfoPanel getActiveInfoPanel() throws Exception{
 		if(Card.getBoard().getWinner()!=null){
+
 			declareWinner();
 			winnerDeclared = true;
 		}
@@ -835,6 +761,8 @@ public class Controller  implements ActionListener,MouseListener{
 	private void declareWinner() throws Exception {
 		if(!winnerDeclared){
 			new GameOver(Card.getBoard().getWinner());
+			if(main.getClip()!=null)
+				main.getClip().stop();
 			main.dispose();
 		}
 

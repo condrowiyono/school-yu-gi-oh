@@ -12,7 +12,6 @@ import org.json.simple.parser.JSONParser;
 
 import com.terserah.yogs.cards.Card;
 import com.terserah.yogs.cards.CardFactory;
-import com.terserah.yogs.maps.DuelistLand;
 
 public class DuelistFactory {
 	private ArrayList<Player> allDuelist = new ArrayList<Player>();

@@ -10,16 +10,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -29,29 +23,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.json.simple.*;
-import org.json.simple.parser.*;
-
 import com.terserah.yogs.cards.Card;
 import com.terserah.yogs.cards.CardFactory;
-import com.terserah.yogs.cards.Location;
-import com.terserah.yogs.cards.Mode;
 import com.terserah.yogs.cards.MonsterCard;
-import com.terserah.yogs.cards.spells.ChangeOfHeart;
-import com.terserah.yogs.cards.spells.Fissure;
-import com.terserah.yogs.cards.spells.FollowWind;
 import com.terserah.yogs.cards.spells.SpellCard;
-import com.terserah.yogs.cards.spells.StopDefense;
-import com.terserah.yogs.cards.spells.MirrorForce;
-import com.terserah.yogs.cards.spells.NegateAttack;
-import com.terserah.yogs.cards.spells.TrapHole;
-import com.terserah.yogs.menu.gui.MainMenu;
+import com.terserah.yogs.maps.Land;
 import com.terserah.yogs.menu.gui.MonsterButton;
 import com.terserah.yogs.menu.gui.SpellButton;
 import com.terserah.yogs.menu.gui.WrapLayout;
-import com.terserah.yogs.menu.listener.CardList;
-import com.terserah.yogs.menu.listener.Interface;
 import com.terserah.yogs.menu.listener.Main;
+import com.terserah.yogs.menu.listener.SoundFactory;
 
 public class Shop extends JFrame{
 	JLabel cardImage;
@@ -63,10 +44,12 @@ public class Shop extends JFrame{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(new Dimension(1344,768));
 		background.setLayout(new BorderLayout());
+		SoundFactory.playBG();
 		JPanel leftSide = new JPanel(new BorderLayout());
 		leftSide.setPreferredSize(new Dimension(344,768));
 		leftSide.setOpaque(false);
 		cardImage = new JLabel(new ImageIcon(ImageIO.read(new File("art/cards/back.png")).getScaledInstance(272, 400, Image.SCALE_SMOOTH)));
+		
 		JButton back = new JButton("Back");
 		JButton buy = new JButton("Buy");
 		Shop current = this;
@@ -147,7 +130,7 @@ public class Shop extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					new MainMenu();
+					Land.openMap();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -163,16 +146,7 @@ public class Shop extends JFrame{
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				String soundName = "sounds/Draw Card (2).wav";
-				try{
-					AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
-					Clip clip = AudioSystem.getClip();
-					clip.open(audioInputStream);
-					clip.start();
-				}
-				catch(Exception e1){
-
-				}
+				SoundFactory.playFX();
 				((JComponent) e.getSource()).setForeground(Color.WHITE);
 			}
 
@@ -194,16 +168,7 @@ public class Shop extends JFrame{
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				String soundName = "sounds/Draw Card (2).wav";
-				try{
-					AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
-					Clip clip = AudioSystem.getClip();
-					clip.open(audioInputStream);
-					clip.start();
-				}
-				catch(Exception e1){
-
-				}
+				SoundFactory.playFX();
 				((JComponent) e.getSource()).setForeground(Color.WHITE);
 			}
 
@@ -303,6 +268,34 @@ public class Shop extends JFrame{
 			} else
 			if ((Main.p1.getAllCard().getDeck().get(i).getJenis()).equals("Spell")) {
 				SpellButton spellButton = new SpellButton((SpellCard) Main.p1.getAllCard().getDeck().get(i));
+				spellButton.setPreferredSize(new Dimension(136,200));
+				spellButton.setIcon(new ImageIcon(spellButton.getSpell().getImage().getScaledInstance(136, 200, Image.SCALE_SMOOTH)));
+				spellButton.addMouseListener(ml);
+				cardsContainer.add(spellButton);
+				spells.add(spellButton);
+			} 
+		}
+		for (int i=0;i<Main.p1.getDeck().getDeck().size();i++){
+			if ((Main.p1.getDeck().getDeck().get(i).getJenis()).equals("Monster")) {
+				MonsterButton monsterButton = new MonsterButton((MonsterCard) Main.p1.getDeck().getDeck().get(i));
+				monsterButton.setPreferredSize(new Dimension(136,200));
+				monsterButton.setIcon(new ImageIcon(monsterButton.getMonster().getImage().getScaledInstance(136, 200, Image.SCALE_SMOOTH)));
+				monsterButton.addMouseListener(ml);
+				cardsContainer.add(monsterButton);
+				monsters.add(monsterButton);
+				monsterButton.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent arg0) {
+						try {
+							JOptionPane.showMessageDialog(null, monsterButton.getMonster().getDescription());
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							JOptionPane.showMessageDialog(null, e.getMessage());
+						}	
+					}
+				});
+			} else
+			if ((Main.p1.getDeck().getDeck().get(i).getJenis()).equals("Spell")) {
+				SpellButton spellButton = new SpellButton((SpellCard) Main.p1.getDeck().getDeck().get(i));
 				spellButton.setPreferredSize(new Dimension(136,200));
 				spellButton.setIcon(new ImageIcon(spellButton.getSpell().getImage().getScaledInstance(136, 200, Image.SCALE_SMOOTH)));
 				spellButton.addMouseListener(ml);

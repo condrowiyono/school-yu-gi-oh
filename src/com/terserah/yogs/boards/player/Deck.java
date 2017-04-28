@@ -140,5 +140,23 @@ public class Deck {
             return null;
         }
     }
+    public Deck getByJenis(String jenis) {
+        Deck exportdeck = new Deck();
+        for (int i = 0; i < deck.size(); i++) {
+	        if (jenis.equals(deck.get(i).getJenis())) {
+	            exportdeck.addToBottom(deck.get(i));
+	        } 
+        }
+        return exportdeck;
+    }
+    public int countbyName(String name) {
+        int count = 0;
+        for (int i = 0; i < deck.size(); i++) {
+	        if (name.equals(deck.get(i).getName())) {
+	            count++;
+	        } 
+        }
+        return count;
+    }
 
 }
